@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "674009497745",
+    "project_id": "moveogroupinterview",
+    "storage_bucket": "moveogroupinterview.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674009497745:android:1ef8d7ade3026b9bfa3f30",
+        "android_client_info": {
+          "package_name": "com.rony.assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKOYtcWoYg9JTN3lYeLFEZlXefJjDlwys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
