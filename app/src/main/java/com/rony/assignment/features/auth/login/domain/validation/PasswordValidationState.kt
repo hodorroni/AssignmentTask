@@ -1,4 +1,4 @@
-package com.rony.assignment.features.auth.domain.validation
+package com.rony.assignment.features.auth.login.domain.validation
 
 data class PasswordValidationState(
     val hasMinLength: Boolean = false,

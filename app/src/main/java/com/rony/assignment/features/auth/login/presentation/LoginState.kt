@@ -1,4 +1,4 @@
-package com.rony.assignment.features.auth.presentation.login
+package com.rony.assignment.features.auth.login.presentation
 
 import androidx.compose.foundation.text.input.TextFieldState
 
@@ -7,5 +7,7 @@ data class LoginState(
     val passwordTextFieldState: TextFieldState = TextFieldState(),
     val canLogin: Boolean = false,
     val isLoggingIn: Boolean = false,
-    val error: String = ""
+    val emailError: String? = null,
+    val passwordError: String? = null,
+    val isPasswordVisible: Boolean = false
 )
