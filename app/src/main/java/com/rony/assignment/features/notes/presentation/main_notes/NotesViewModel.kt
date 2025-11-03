@@ -3,6 +3,8 @@ package com.rony.assignment.features.notes.presentation.main_notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rony.assignment.features.notes.domain.NoteRepository
+import com.rony.assignment.features.notes.domain.NoteUi
+import com.rony.assignment.features.notes.presentation.mappers.toDomain
 import com.rony.assignment.features.notes.presentation.mappers.toUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class NotesViewModel(
     private val noteRepository: NoteRepository
@@ -35,7 +38,14 @@ class NotesViewModel(
     fun onAction(action: NotesAction) {
         when (action) {
             is NotesAction.OnNoteTabSelected -> onTabSelected(newTab = action.selectedTab)
+            is NotesAction.OnNoteDeleted -> onDeleteNote(note = action.note)
             else -> {}
+        }
+    }
+
+    private fun onDeleteNote(note: NoteUi) {
+        viewModelScope.launch {
+            noteRepository.deleteNote(note.toDomain())
         }
     }
 

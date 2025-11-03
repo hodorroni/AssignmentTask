@@ -42,6 +42,8 @@ class NoteViewModel(
     private val eventChannel = Channel<NoteEvent>()
     val event = eventChannel.receiveAsFlow()
 
+    var shouldShowPermissionsOnScreen = true
+
     private var _state = MutableStateFlow(NoteState())
     val state = _state
         .onStart {

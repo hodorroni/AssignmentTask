@@ -69,6 +69,9 @@ fun NotesScreen(
                         items = state.notes,
                         onNoteClicked = {
                             action(NotesAction.OnNoteClicked(id = it))
+                        },
+                        onDeleteNote = {
+                            action(NotesAction.OnNoteDeleted(note = it))
                         }
                     )
                     ScreenMode.MAP_MODE -> {

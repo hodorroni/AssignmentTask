@@ -31,7 +31,7 @@ fun NavGraphBuilder.notesGraph(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                val viewModel = koinViewModel<NotesViewModel>()
+                val viewModel = koinViewModel<NotesViewModel>() //shared viewmodel for list Mode + MapMode screens.
                 NotesScreenRoot(
                     viewModel = viewModel,
                     openCreateNoteScreen = {
