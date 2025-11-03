@@ -6,6 +6,8 @@ import com.rony.assignment.di.appModule
 import com.rony.assignment.features.auth.data.di.firebaseModule
 import com.rony.assignment.features.auth.presentation.login.di.authPresentationModule
 import com.rony.assignment.features.auth.presentation.register.di.registerPresentationModule
+import com.rony.assignment.features.notes.domain.di.noteDomainModule
+import com.rony.assignment.features.notes.presentation.di.allNotesModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
@@ -25,7 +27,9 @@ class MyApplication: Application() {
                 authPresentationModule,
                 registerPresentationModule,
                 firebaseModule,
-                coreDataModule
+                coreDataModule,
+                allNotesModule,
+                noteDomainModule
             )
         }
     }

@@ -28,6 +28,9 @@ serialization = "1.7.3"
 coil = "2.7.0"
 koin = "3.5.6"
 
+#kotlin datetime
+kotlinx-datetime = "0.6.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,6 +81,10 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 
 #Timber
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+#Kotlin datetime
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

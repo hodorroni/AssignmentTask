@@ -7,5 +7,15 @@ sealed interface NoteRoutes {
     data object Graph: NoteRoutes
 
     @Serializable
-    data object MainNotes: NoteRoutes
+    data object MainNotesContainer: NoteRoutes
+
+    @Serializable
+    data object ListNotes: NoteRoutes
+
+    @Serializable
+    data object MapNotes: NoteRoutes
+
+    @Serializable
+    data object NoteScreen: NoteRoutes
+
 }
