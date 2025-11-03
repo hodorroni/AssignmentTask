@@ -3,6 +3,9 @@ package com.rony.assignment.features.auth.presentation.login
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rony.assignment.core.domain.util.onFailure
+import com.rony.assignment.core.domain.util.onSuccess
+import com.rony.assignment.features.auth.domain.AuthService
 import com.rony.assignment.features.auth.domain.validation.EmailValidator
 import com.rony.assignment.features.auth.domain.validation.PasswordValidator
 import kotlinx.coroutines.channels.Channel
@@ -17,9 +20,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class LoginViewModel(
-
+    private val authService: AuthService
 ): ViewModel() {
 
     private val eventChannel = Channel<LoginEvent>()
@@ -93,8 +97,17 @@ class LoginViewModel(
 
             val email = state.value.emailTextFieldState.text.toString()
             val password = state.value.passwordTextFieldState.text.toString()
-
-            //TODO make firebase request!
+            authService.login(email = email, password = password)
+                .onSuccess {
+                    Timber.tag("stamstam").d("Success!")
+                    eventChannel.send(LoginEvent.OnSuccessfullyLoggedIn)
+                }
+                .onFailure {
+                    Timber.tag("stamstam").d("error: $it")
+                    _state.update { it.copy(
+                        isLoggingIn = false
+                    ) }
+                }
         }
     }
 

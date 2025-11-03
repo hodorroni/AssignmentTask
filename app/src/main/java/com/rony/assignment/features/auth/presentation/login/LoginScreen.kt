@@ -19,6 +19,7 @@ import com.rony.assignment.core.presentation.design_system.components.buttons.No
 import com.rony.assignment.core.presentation.design_system.components.layouts.NotesSurface
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesPasswordTextField
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesTextField
+import com.rony.assignment.core.presentation.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -29,6 +30,12 @@ fun LoginScreenRoot(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when(event) {
+            LoginEvent.OnSuccessfullyLoggedIn -> onLoginSucceeded()
+        }
+    }
 
     LoginScreen(
         state = state,

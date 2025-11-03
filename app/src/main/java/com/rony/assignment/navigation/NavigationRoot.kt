@@ -22,19 +22,23 @@ fun NavigationRoot(
         authGraph(
             navController = navController,
             onLoginSuccess = {
-                //TODO move to main screen
+                navigateToMainScreen(navController = navController)
             },
             onSuccessfullyRegistered = {
-                navController.navigate(NoteRoutes.Graph) {
-                    popUpTo(AuthRoutes.Graph) {
-                        inclusive = true
-                    }
-                }
+                navigateToMainScreen(navController = navController)
             }
         )
 
         notesGraph(
             navController = navController
         )
+    }
+}
+
+private fun navigateToMainScreen(navController: NavHostController) {
+    navController.navigate(NoteRoutes.Graph) {
+        popUpTo(AuthRoutes.Graph) {
+            inclusive = true
+        }
     }
 }

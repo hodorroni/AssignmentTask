@@ -9,6 +9,7 @@ import com.rony.assignment.core.domain.util.emptySuccess
 import com.rony.assignment.features.auth.data.mappers.mapFirebaseError
 import com.rony.assignment.features.auth.domain.AuthService
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.CancellationException
 
 class FirebaseAuthService(
     private val firebaseAuth: FirebaseAuth
@@ -20,7 +21,11 @@ class FirebaseAuthService(
             emptySuccess()
         } catch (e: FirebaseException) {
             Result.Failure(mapFirebaseError(e))
-        } catch (e: Exception) {
+        }
+        catch (e: CancellationException) {
+            Result.Failure(DataError.Remote.UNKNOWN)
+        }
+        catch (e: Exception) {
             Result.Failure(DataError.Remote.UNKNOWN)
         }
     }
@@ -31,7 +36,11 @@ class FirebaseAuthService(
             emptySuccess()
         } catch (e: FirebaseException) {
             Result.Failure(mapFirebaseError(e))
-        } catch (e: Exception) {
+        }
+        catch (e: CancellationException) {
+            Result.Failure(DataError.Remote.UNKNOWN)
+        }
+        catch (e: Exception) {
             Result.Failure(DataError.Remote.UNKNOWN)
         }
     }
