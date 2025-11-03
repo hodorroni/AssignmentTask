@@ -3,7 +3,6 @@ package com.rony.assignment.features.notes.data
 import com.rony.assignment.core.data.database.mappers.toNoteEntity
 import com.rony.assignment.core.domain.notes.LocalNoteDataSource
 import com.rony.assignment.core.domain.notes.Note
-import com.rony.assignment.features.notes.data.mappers.toUi
 import com.rony.assignment.features.notes.domain.NoteRepository
 import com.rony.assignment.features.notes.domain.NoteUi
 import kotlinx.coroutines.flow.Flow
@@ -13,22 +12,14 @@ class OfflineFirstNoteRepository(
     private val localNoteDataSource: LocalNoteDataSource
 ): NoteRepository {
 
-    override fun getAllNotes(): Flow<List<NoteUi>> {
+    override fun getAllNotes(): Flow<List<Note>> {
         return localNoteDataSource
             .getAllNotes()
-            .map { notes ->
-                notes.map { note ->
-                    note.toUi()
-                }
-            }
     }
 
-    override fun getNote(id: Int): Flow<NoteUi> {
+    override fun getNote(id: Int): Flow<Note> {
         return localNoteDataSource
             .getNote(id)
-            .map {
-                it.toUi()
-            }
     }
 
     override suspend  fun deleteNote(note: Note) {

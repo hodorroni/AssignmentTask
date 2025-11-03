@@ -1,4 +1,4 @@
-package com.rony.assignment.features.notes.data.mappers
+package com.rony.assignment.features.notes.presentation.mappers
 
 import com.rony.assignment.core.domain.notes.Note
 import com.rony.assignment.features.notes.domain.NoteUi
@@ -10,7 +10,8 @@ fun Note.toUi(): NoteUi {
         description = description,
         latitude = latitude,
         longitude = longitude,
-        createdAt = createdAt
+        createdAt = createdAt,
+        imageUri = imageUri
     )
 }
 
@@ -21,6 +22,7 @@ fun NoteUi.toDomain(): Note {
         description = description ?: "",
         latitude = latitude,
         longitude = longitude,
-        createdAt = createdAt
+        createdAt = createdAt,
+        imageUri = imageUri
     )
 }

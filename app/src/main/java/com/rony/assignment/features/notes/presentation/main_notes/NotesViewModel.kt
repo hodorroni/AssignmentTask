@@ -1,4 +1,4 @@
-package com.rony.assignment.features.notes.presentation
+package com.rony.assignment.features.notes.presentation.main_notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +29,7 @@ class NotesViewModel : ViewModel() {
     fun onAction(action: NotesAction) {
         when (action) {
             is NotesAction.OnNoteTabSelected -> onTabSelected(newTab = action.selectedTab)
+            else -> {}
         }
     }
 

@@ -10,5 +10,6 @@ data class NoteUi(
     val description: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val createdAt: Instant? = null
+    val createdAt: Instant? = null,
+    val imageUri: String? = null
 )

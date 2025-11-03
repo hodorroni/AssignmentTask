@@ -1,5 +1,6 @@
 package com.rony.assignment.features.notes.presentation.navigation
 
+import com.rony.assignment.features.notes.domain.NoteUi
 import kotlinx.serialization.Serializable
 
 sealed interface NoteRoutes {
@@ -10,12 +11,5 @@ sealed interface NoteRoutes {
     data object MainNotesContainer: NoteRoutes
 
     @Serializable
-    data object ListNotes: NoteRoutes
-
-    @Serializable
-    data object MapNotes: NoteRoutes
-
-    @Serializable
-    data object NoteScreen: NoteRoutes
-
+    data class NoteScreen(val noteId: Int? = null, val isFromCreateNote: Boolean) : NoteRoutes
 }

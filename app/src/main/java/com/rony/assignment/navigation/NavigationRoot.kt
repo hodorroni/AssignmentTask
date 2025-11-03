@@ -17,7 +17,7 @@ fun NavigationRoot(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
     ) {
         authGraph(
             navController = navController,

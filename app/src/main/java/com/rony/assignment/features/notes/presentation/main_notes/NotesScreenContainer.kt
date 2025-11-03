@@ -1,10 +1,11 @@
-package com.rony.assignment.features.notes.presentation
+package com.rony.assignment.features.notes.presentation.main_notes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,18 +43,21 @@ fun NotesRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    NotesScreen(
+    NotesScreenWrapper(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        content = {}
     )
 }
 
 @Composable
-fun NotesScreen(
+fun NotesScreenWrapper(
     state: NotesState,
     onAction: (NotesAction) -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     NotesSurface(
+        shouldIncludeVerticalScroll = false,
         header = {
             Spacer(modifier = Modifier.height(45.dp))
             Icon(
@@ -105,6 +109,7 @@ fun NotesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 )
+                content()
             }
         }
     }
@@ -183,15 +188,16 @@ fun TabItem(
 
 @Preview
 @Composable
-private fun NotesPreview() {
+private fun NotesPreviewWrapper() {
     NotesApplicationTheme {
-        NotesScreen(
+        NotesScreenWrapper(
             state = NotesState(
                 notes = listOf(
                     NoteUi()
                 )
             ),
-            onAction = {}
+            onAction = {},
+            content = {}
         )
     }
 }

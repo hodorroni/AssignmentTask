@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun NotesSurface(
     modifier: Modifier = Modifier,
+    shouldIncludeVerticalScroll: Boolean = true,
     header: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -45,7 +46,13 @@ fun NotesSurface(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
-                        .verticalScroll(rememberScrollState())
+                        .then(
+                            if (shouldIncludeVerticalScroll) {
+                                Modifier.verticalScroll(rememberScrollState())
+                            } else {
+                                Modifier
+                            }
+                        )
                 ) {
                     content()
                 }

@@ -1,11 +1,13 @@
-package com.rony.assignment.features.notes.presentation
+package com.rony.assignment.features.notes.presentation.main_notes
 
 import com.rony.assignment.features.notes.domain.NoteUi
 
 data class NotesState(
     val currentScreenMode: ScreenMode = ScreenMode.LIST_MODE,
     val isLoadingNotes: Boolean = false,
-    val notes: List<NoteUi> = emptyList()
+    val notes: List<NoteUi> = listOf(
+        NoteUi()
+    )
 ) {
     val tabList = listOf<TabItem>(
         TabItem(
