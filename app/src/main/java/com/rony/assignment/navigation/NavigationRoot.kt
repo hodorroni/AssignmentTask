@@ -12,7 +12,6 @@ import com.rony.assignment.features.notes.presentation.navigation.notesGraph
 @Composable
 fun NavigationRoot(
     navController: NavHostController,
-    isLoggedIn: Boolean,
     startDestination: Any = AuthRoutes.Graph
 ) {
 
