@@ -72,6 +72,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.bundles.koin)
 
+    //Timber
+    implementation(libs.timber)
+
 
 
     implementation(libs.lifecycle.viewmodel.compose)

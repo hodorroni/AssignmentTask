@@ -59,7 +59,7 @@ fun NotesTextField(
                     if(state.text.isEmpty() && placeHolder != null) {
                         Text(
                             text = placeHolder,
-                            color = MaterialTheme.colorScheme.onPrimary.copy(
+                            color = MaterialTheme.colorScheme.onSurface.copy(
                                 alpha = 0.8f
                             ),
                             style = MaterialTheme.typography.bodyMedium

@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TextFieldLayout(
     title: String?,
+    modifier: Modifier = Modifier,
     isError: Boolean = false,
     errorText: String? = null,
     enabled: Boolean = true,
-    modifier: Modifier = Modifier,
     textFField: @Composable (Modifier, MutableInteractionSource) -> Unit
 ) {
     val interactionSource = remember {
@@ -63,7 +63,9 @@ fun TextFieldLayout(
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.8f
+                )
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
@@ -77,7 +79,7 @@ fun TextFieldLayout(
                 color = if(isError) {
                     MaterialTheme.colorScheme.error
                 } else MaterialTheme.colorScheme.onSecondary,
-                style = MaterialTheme.typography.displaySmall
+                style = MaterialTheme.typography.titleSmall
             )
         }
     }

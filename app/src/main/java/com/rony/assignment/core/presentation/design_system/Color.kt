@@ -2,6 +2,10 @@ package com.rony.assignment.core.presentation.design_system
 
 import androidx.compose.ui.graphics.Color
 
+val BluePrimary = Color(0xFF2F6CD0)
+val BlueLight = Color(0xFF5F94E4)
+val BlueDark = Color(0xFF2255A6)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
@@ -19,6 +23,8 @@ val LightOnSurfaceVariant = Color(0xFF49454F)
 val LightOutline = Color(0xFF79747E)
 val LightError = Color(0xFFB3261E)
 val LightOnError = Color.White
+
+val GreenishColor = Color(0xFF092E2D)
 
 val DarkBackground = Color(0xFF121212)
 val DarkSurface = Color(0xFF1E1E1E)
