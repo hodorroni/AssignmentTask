@@ -1,5 +1,6 @@
 package com.rony.assignment.features.notes.presentation.note
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import com.rony.assignment.features.notes.domain.LocationObserver
 import com.rony.assignment.features.notes.domain.LocationTracker
 import com.rony.assignment.features.notes.domain.NoteRepository
 import com.rony.assignment.features.notes.presentation.mappers.toUi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,6 +38,9 @@ class NoteViewModel(
     private val isFromCreateNote: Boolean = savedStateHandle.get<Boolean>("isFromCreateNote") ?: false
     private val noteId = savedStateHandle.get<Int?>("noteId")
     private var hasLoadedInitialData = false
+
+    private val eventChannel = Channel<NoteEvent>()
+    val event = eventChannel.receiveAsFlow()
 
     private var _state = MutableStateFlow(NoteState())
     val state = _state
@@ -153,6 +159,7 @@ class NoteViewModel(
             _state.update { it.copy(
                 isSaving = false
             ) }
+            eventChannel.send(NoteEvent.OnSuccessfullySavedNote)
         }
     }
 
@@ -188,11 +195,18 @@ class NoteViewModel(
                     _state.update { it.copy(
                         note = noteUi,
                         isLoading = false,
-                        imageUri = it.imageUri
+                        imageUri = noteUi.imageUri,
+                        titleTextFieldState = TextFieldState(noteUi.title ?: ""),
+                        descriptionTextFieldState = TextFieldState(noteUi.description ?: "")
                     ) }
                 }
+                    .launchIn(viewModelScope)
             }
         }
+
+        _state.update { it.copy(
+            isLoading = false
+        ) }
     }
 
     override fun onCleared() {

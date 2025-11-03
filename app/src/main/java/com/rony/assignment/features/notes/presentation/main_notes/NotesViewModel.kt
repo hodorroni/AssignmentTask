@@ -2,13 +2,19 @@ package com.rony.assignment.features.notes.presentation.main_notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rony.assignment.features.notes.domain.NoteRepository
+import com.rony.assignment.features.notes.presentation.mappers.toUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class NotesViewModel : ViewModel() {
+class NotesViewModel(
+    private val noteRepository: NoteRepository
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
@@ -16,7 +22,7 @@ class NotesViewModel : ViewModel() {
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                /** Load initial data here **/
+                observeNotes()
                 hasLoadedInitialData = true
             }
         }
@@ -31,6 +37,19 @@ class NotesViewModel : ViewModel() {
             is NotesAction.OnNoteTabSelected -> onTabSelected(newTab = action.selectedTab)
             else -> {}
         }
+    }
+
+    private fun observeNotes() {
+        noteRepository.getAllNotes()
+            .onEach { localNotes ->
+                val uiNotes = localNotes.map {
+                    it.toUi()
+                }
+                _state.update { it.copy(
+                    notes = uiNotes
+                ) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun onTabSelected(newTab: ScreenMode) {

@@ -38,6 +38,11 @@ fun NavGraphBuilder.notesGraph(
                         navController.navigate(NoteRoutes.NoteScreen(isFromCreateNote = true)) {
                             restoreState = true
                         }
+                    },
+                    openViewNote = {
+                        navController.navigate(NoteRoutes.NoteScreen(isFromCreateNote = false, noteId = it)) {
+                            restoreState = true
+                        }
                     }
                 )
             }
@@ -48,6 +53,9 @@ fun NavGraphBuilder.notesGraph(
             //arguments will be handled inside viewmodel savedStateHandle!
             NoteRoot(
                 onCancelClicked = {
+                    navController.popBackStack()
+                },
+                onSuccessSavingNote = {
                     navController.popBackStack()
                 }
             )

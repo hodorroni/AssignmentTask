@@ -26,11 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.rony.assignment.features.notes.domain.NoteUi
+import timber.log.Timber
 
 @Composable
 fun ListModeNote(
     items: List<NoteUi>,
-    onNoteClicked:(NoteUi) -> Unit,
+    onNoteClicked:(Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -40,7 +41,7 @@ fun ListModeNote(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(items, key = { it.id }) { note ->
-            ListModeItem(note = note, onClick = { onNoteClicked(note) })
+            ListModeItem(note = note, onClick = { onNoteClicked(note.id) })
         }
     }
 }

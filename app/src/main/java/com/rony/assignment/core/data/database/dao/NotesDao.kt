@@ -19,7 +19,7 @@ interface NotesDao {
     @Query("SELECT * FROM notes ORDER by createdAt DESC")
     fun getAllNotes(): Flow<List<NoteEntity>>
 
-    @Query("SELECT * FROM NOTES where id=:id")
+    @Query("SELECT * FROM notes where id = :id")
     fun getNote(id: Int): Flow<NoteEntity>
 
     @Delete

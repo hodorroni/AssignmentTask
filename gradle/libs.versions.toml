@@ -11,6 +11,7 @@ activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 splashscreen = "1.0.1"
 timber = "5.0.1"
+secretsPlugin = "2.0.1"
 
 #room db
 room = "2.8.3"
@@ -91,6 +92,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.25" }
+secrets-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsPlugin"}
 
 # firebase
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }

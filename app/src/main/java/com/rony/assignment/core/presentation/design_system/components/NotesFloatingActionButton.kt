@@ -30,7 +30,7 @@ fun NotesFloatingActionButton(
 
 @Composable
 @Preview
-fun ChirpFloatingActionButtonPreview() {
+fun FloatingActionButtonPreview() {
     NotesApplicationTheme() {
         NotesFloatingActionButton(
             onClick = {}

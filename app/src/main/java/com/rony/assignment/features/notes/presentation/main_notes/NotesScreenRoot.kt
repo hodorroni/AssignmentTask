@@ -7,14 +7,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rony.assignment.core.presentation.design_system.components.NotesFloatingActionButton
 import com.rony.assignment.features.notes.presentation.note_modes.ListModeNote
+import com.rony.assignment.features.notes.presentation.note_modes.MapMode
 
 @Composable
 fun NotesScreenRoot(
     viewModel: NotesViewModel,
-    openCreateNoteScreen: () -> Unit
+    openCreateNoteScreen: () -> Unit,
+    openViewNote: (Int) -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -24,6 +28,7 @@ fun NotesScreenRoot(
         action = { action ->
             when(action) {
                 NotesAction.OnFabCreateNewNoteClicked -> openCreateNoteScreen()
+                is NotesAction.OnNoteClicked -> openViewNote(action.id)
                 else -> Unit
             }
             viewModel.onAction(action = action)
@@ -47,7 +52,11 @@ fun NotesScreen(
                         imageVector = Icons.Default.Add,
                         contentDescription = null
                     )
-                }
+                },
+                modifier = Modifier
+                    .graphicsLayer(
+                        translationY = (-300).toFloat()
+                    )
             )
         }
     ) {
@@ -58,10 +67,17 @@ fun NotesScreen(
                 when(state.currentScreenMode) {
                     ScreenMode.LIST_MODE -> ListModeNote(
                         items = state.notes,
-                        onNoteClicked = {}
+                        onNoteClicked = {
+                            action(NotesAction.OnNoteClicked(id = it))
+                        }
                     )
                     ScreenMode.MAP_MODE -> {
-                        //TODO Map mode composable
+                        MapMode(
+                            items = state.mapItemsWithCoordinates,
+                            onNoteClicked = {
+                                action(NotesAction.OnNoteClicked(id = it))
+                            }
+                        )
                     }
                 }
             }

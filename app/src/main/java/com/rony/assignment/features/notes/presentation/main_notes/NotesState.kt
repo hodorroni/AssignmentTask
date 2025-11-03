@@ -1,13 +1,12 @@
 package com.rony.assignment.features.notes.presentation.main_notes
 
 import com.rony.assignment.features.notes.domain.NoteUi
+import com.rony.assignment.features.notes.domain.map.MapData
 
 data class NotesState(
     val currentScreenMode: ScreenMode = ScreenMode.LIST_MODE,
     val isLoadingNotes: Boolean = false,
-    val notes: List<NoteUi> = listOf(
-        NoteUi()
-    )
+    val notes: List<NoteUi> = emptyList()
 ) {
     val tabList = listOf<TabItem>(
         TabItem(
@@ -21,6 +20,20 @@ data class NotesState(
             isSelected = this.currentScreenMode == ScreenMode.MAP_MODE
         )
     )
+
+    val mapItemsWithCoordinates = notes
+        .mapNotNull { noteUi ->
+            if(noteUi.latitude == null || noteUi.longitude == null) {
+                return@mapNotNull null
+            }
+            MapData(
+                id = noteUi.id,
+                title = noteUi.title,
+                description = noteUi.description,
+                latitude = noteUi.latitude,
+                longitude = noteUi.longitude
+            )
+        }
 }
 
 data class TabItem(

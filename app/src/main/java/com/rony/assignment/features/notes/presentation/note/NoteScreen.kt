@@ -2,6 +2,7 @@ package com.rony.assignment.features.notes.presentation.note
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -46,6 +47,7 @@ import com.rony.assignment.core.presentation.design_system.components.buttons.No
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButtonStyles
 import com.rony.assignment.core.presentation.design_system.components.layouts.NotesSurface
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesTextField
+import com.rony.assignment.core.presentation.utils.ObserveAsEvents
 import com.rony.assignment.features.notes.presentation.navigation.NoteRoutes
 import com.rony.assignment.features.notes.presentation.util.hasLocationPermission
 import com.rony.assignment.features.notes.presentation.util.shouldShowLocationPermissionRationale
@@ -58,9 +60,16 @@ import java.util.UUID
 @Composable
 fun NoteRoot(
     onCancelClicked: () -> Unit,
-    viewModel: NoteViewModel = koinViewModel()
+    viewModel: NoteViewModel = koinViewModel(),
+    onSuccessSavingNote: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvents(viewModel.event) { event ->
+        when(event) {
+            NoteEvent.OnSuccessfullySavedNote -> onSuccessSavingNote()
+        }
+    }
 
     NoteScreen(
         state = state,
@@ -85,6 +94,10 @@ fun NoteScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
+            context.contentResolver.takePersistableUriPermission(
+                it,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
             onAction(NoteAction.OnImageCaptured(it.toString()))
         }
     }
@@ -179,9 +192,9 @@ fun NoteScreen(
                             .crossfade(true)
                             .build(),
                         contentDescription = "Note image",
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.Crop,
                         modifier = imageModifier
-                            .widthIn(min = 100.dp, max = 200.dp)
+                            .width(200.dp)
                             .height(200.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .align(Alignment.CenterHorizontally)
@@ -193,9 +206,9 @@ fun NoteScreen(
                             .crossfade(true)
                             .build(),
                         contentDescription = "Default image",
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.Crop,
                         modifier = imageModifier
-                            .widthIn(min = 100.dp, max = 200.dp)
+                            .width(200.dp)
                             .height(200.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .align(Alignment.CenterHorizontally)
@@ -214,7 +227,7 @@ fun NoteScreen(
                     errorText = state.titleError,
                     isError = state.titleError != null,
                     singleLine = true,
-                    enabled = state.isFromCreate
+                    enabled = state.isFromCreate || (!state.isEditButtonShown)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -228,8 +241,8 @@ fun NoteScreen(
                     title = "Description",
                     errorText = state.descError,
                     isError = state.descError != null,
-                    singleLine = true,
-                    enabled = state.isFromCreate
+                    singleLine = false,
+                    enabled = state.isFromCreate || (!state.isEditButtonShown)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

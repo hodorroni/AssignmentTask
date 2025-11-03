@@ -8,6 +8,8 @@ import com.rony.assignment.core.domain.notes.LocalNoteDataSource
 import com.rony.assignment.core.domain.notes.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 class RoomLocalNoteDataSource(
     private val notesDao: NotesDao
