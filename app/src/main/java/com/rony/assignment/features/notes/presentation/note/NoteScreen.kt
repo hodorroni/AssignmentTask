@@ -1,6 +1,14 @@
 package com.rony.assignment.features.notes.presentation.note
 
+import android.Manifest
+import android.content.Context
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +36,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rony.assignment.R
 import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
+import com.rony.assignment.core.presentation.design_system.components.NotesDialog
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButton
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButtonStyles
 import com.rony.assignment.core.presentation.design_system.components.layouts.NotesSurface
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesTextField
+import com.rony.assignment.features.notes.presentation.navigation.NoteRoutes
+import com.rony.assignment.features.notes.presentation.util.hasLocationPermission
+import com.rony.assignment.features.notes.presentation.util.shouldShowLocationPermissionRationale
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -51,104 +65,176 @@ fun NoteScreen(
     onAction: (NoteAction) -> Unit,
 ) {
     val context = LocalContext.current
-    NotesSurface(
-        header = {
-            Spacer(modifier = Modifier.height(64.dp))
-        },
-        shouldIncludeVerticalScroll = true,
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Spacer(modifier = Modifier.height(12.dp))
-        if (state.note?.imageUri != null) {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(state.note.imageUri)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Note image",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .widthIn(min = 100.dp, max = 200.dp)
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .align(Alignment.CenterHorizontally)
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { perms ->
+        val hasCourseLocationPermission = perms[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        val hasFineLocationPermission = perms[Manifest.permission.ACCESS_FINE_LOCATION] == true
+
+        val activity = context as ComponentActivity
+        val showLocationRationale = activity.shouldShowLocationPermissionRationale()
+        onAction(
+            NoteAction.LocationPermissionInfo(
+                isAcceptedLocation = hasCourseLocationPermission && hasFineLocationPermission,
+                showLocationRationale = showLocationRationale
             )
-        } else {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(R.drawable.anonymous)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Default image",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .widthIn(min = 100.dp, max = 200.dp)
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .align(Alignment.CenterHorizontally)
+        )
+    }
+
+    //will run once the screen goes into composition.
+    LaunchedEffect(key1 = true) {
+        val activity = context as ComponentActivity
+        val showLocationRationale = activity.shouldShowLocationPermissionRationale()
+
+        onAction(
+            NoteAction.LocationPermissionInfo(
+                isAcceptedLocation = context.hasLocationPermission(),
+                showLocationRationale = showLocationRationale
             )
+        )
+
+        if(!showLocationRationale) {
+            permissionLauncher.requestLocationPermission(context)
+        }
+    }
+
+    when {
+        state.isLoading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        NotesTextField(
-            state = state.titleTextFieldState,
-            modifier = Modifier
-                .fillMaxWidth(),
-            placeHolder = if(state.isFromCreate) {
-                "Title"
-            } else null,
-            title = "Title",
-            errorText = state.titleError,
-            isError = state.titleError != null,
-            singleLine = true,
-            enabled = state.isFromCreate
-        )
+        state.shouldShowLocationRationale -> {
+            NotesDialog(
+                title = "Location permission is needed",
+                description = "Location permissions will grant the possibility to watch notes within the Map Mode, otherwise nothing will be shown there",
+                primaryButton = {
+                    NotesButton(
+                        text = "Close",
+                        onClick = {
+                            onAction(NoteAction.OnDismissedLocationDialog)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                },
+                secondaryButton = {
 
-        Spacer(modifier = Modifier.height(16.dp))
-        NotesTextField(
-            state = state.descriptionTextFieldState,
-            modifier = Modifier
-                .fillMaxWidth(),
-            placeHolder = if(state.isFromCreate) {
-                "Description"
-            } else null,
-            title = "Description",
-            errorText = state.descError,
-            isError = state.descError != null,
-            singleLine = true,
-            enabled = state.isFromCreate
-        )
+                },
+                onDismiss = {
+                    onAction(
+                        NoteAction.OnDismissedLocationDialog
+                    )
+                }
+            )
+        }
+        else -> {
+            NotesSurface(
+                header = {
+                    Spacer(modifier = Modifier.height(64.dp))
+                },
+                shouldIncludeVerticalScroll = true,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
+                if (state.note?.imageUri != null) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(state.note.imageUri)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Note image",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .widthIn(min = 100.dp, max = 200.dp)
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(R.drawable.anonymous)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Default image",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .widthIn(min = 100.dp, max = 200.dp)
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        if(state.isFromCreate) {
-            IsFromCreateNewNoteButtons(
-                isSaveButtonLoading = state.isSaving,
-                canSave = state.canSave,
-                onCancelClicked = {
-                    onAction(NoteAction.OnCancelClicked)
-                },
-                onSaveClicked = {
-                    onAction(NoteAction.OnSaveNote)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else {
-            DefaultButtons(
-                isEditButtonShown = state.isEditButtonShown,
-                canSave = state.canSave,
-                isSaveButtonLoading = state.isSaving,
-                onCancelClicked = {
-                    onAction(NoteAction.OnCancelClicked)
-                },
-                onEditToggled = {
-                    onAction(NoteAction.OnEditToggled)
-                },
-                onSaveClicked = {
-                    onAction(NoteAction.OnSaveNote)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
+                Spacer(modifier = Modifier.height(16.dp))
+                NotesTextField(
+                    state = state.titleTextFieldState,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    placeHolder = if(state.isFromCreate) {
+                        "Title"
+                    } else null,
+                    title = "Title",
+                    errorText = state.titleError,
+                    isError = state.titleError != null,
+                    singleLine = true,
+                    enabled = state.isFromCreate
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                NotesTextField(
+                    state = state.descriptionTextFieldState,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    placeHolder = if(state.isFromCreate) {
+                        "Description"
+                    } else null,
+                    title = "Description",
+                    errorText = state.descError,
+                    isError = state.descError != null,
+                    singleLine = true,
+                    enabled = state.isFromCreate
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                if(state.isFromCreate) {
+                    IsFromCreateNewNoteButtons(
+                        isSaveButtonLoading = state.isSaving,
+                        canSave = state.canSave,
+                        onCancelClicked = {
+                            onAction(NoteAction.OnCancelClicked)
+                        },
+                        onSaveClicked = {
+                            onAction(NoteAction.OnSaveNote)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    DefaultButtons(
+                        isEditButtonShown = state.isEditButtonShown,
+                        canSave = state.canSave,
+                        isSaveButtonLoading = state.isSaving,
+                        onCancelClicked = {
+                            onAction(NoteAction.OnCancelClicked)
+                        },
+                        onEditToggled = {
+                            onAction(NoteAction.OnEditToggled)
+                        },
+                        onSaveClicked = {
+                            onAction(NoteAction.OnSaveNote)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
     }
 }
@@ -226,6 +312,19 @@ fun IsFromCreateNewNoteButtons(
             enabled = !isSaveButtonLoading && canSave,
             isLoading = isSaveButtonLoading,
         )
+    }
+}
+
+private fun ActivityResultLauncher<Array<String>>.requestLocationPermission(
+    context: Context
+) {
+    val hasLocationPermission = context.hasLocationPermission()
+    val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+    if(!hasLocationPermission) {
+        launch(locationPermissions)
     }
 }
 

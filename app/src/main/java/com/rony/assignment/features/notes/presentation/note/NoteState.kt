@@ -14,5 +14,6 @@ data class NoteState(
     val imageUri: String? = null,
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
-    val canSave: Boolean = false
+    val canSave: Boolean = false,
+    val shouldShowLocationRationale: Boolean = false
 )

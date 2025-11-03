@@ -67,7 +67,23 @@ class NoteViewModel(
         when (action) {
             NoteAction.OnEditToggled -> onEditToggled()
             NoteAction.OnSaveNote -> saveNote()
+            NoteAction.OnDismissedLocationDialog -> closeLocationDialog()
+            is NoteAction.LocationPermissionInfo -> {
+                _state.update {
+                    it.copy(
+                        shouldShowLocationRationale = action.showLocationRationale
+                    )
+                }
+            }
             else -> Unit
+        }
+    }
+
+    private fun closeLocationDialog() {
+        _state.update {
+            it.copy(
+                shouldShowLocationRationale = false
+            )
         }
     }
 
