@@ -38,19 +38,6 @@ import com.rony.assignment.features.notes.domain.NoteUi
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun NotesRoot(
-    viewModel: NotesViewModel = koinViewModel()
-) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    NotesScreenWrapper(
-        state = state,
-        onAction = viewModel::onAction,
-        content = {}
-    )
-}
-
-@Composable
 fun NotesScreenWrapper(
     state: NotesState,
     onAction: (NotesAction) -> Unit,

@@ -26,13 +26,6 @@ fun NavGraphBuilder.notesGraph(
         startDestination = NoteRoutes.MainNotesContainer
     ) {
         composable<NoteRoutes.MainNotesContainer> {
-//            val parentEntry = remember(navController) {
-//                navController.getBackStackEntry(NoteRoutes.Graph::class)
-//            }
-//
-//            val viewmodel = koinViewModel<NotesViewModel>(
-//                viewModelStoreOwner = parentEntry
-//            )
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -51,9 +44,13 @@ fun NavGraphBuilder.notesGraph(
         }
 
         composable<NoteRoutes.NoteScreen>(
-        ) { backStackEntry ->
+        ) {
             //arguments will be handled inside viewmodel savedStateHandle!
-            NoteRoot()
+            NoteRoot(
+                onCancelClicked = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

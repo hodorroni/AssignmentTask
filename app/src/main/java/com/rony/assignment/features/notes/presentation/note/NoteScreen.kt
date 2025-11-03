@@ -2,12 +2,14 @@ package com.rony.assignment.features.notes.presentation.note
 
 import android.Manifest
 import android.content.Context
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +24,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -44,18 +49,28 @@ import com.rony.assignment.core.presentation.design_system.components.text_field
 import com.rony.assignment.features.notes.presentation.navigation.NoteRoutes
 import com.rony.assignment.features.notes.presentation.util.hasLocationPermission
 import com.rony.assignment.features.notes.presentation.util.shouldShowLocationPermissionRationale
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
+import java.io.File
+import java.util.UUID
 
 @Composable
 fun NoteRoot(
+    onCancelClicked: () -> Unit,
     viewModel: NoteViewModel = koinViewModel()
-
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     NoteScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when(action) {
+                NoteAction.OnCancelClicked -> onCancelClicked()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -65,6 +80,14 @@ fun NoteScreen(
     onAction: (NoteAction) -> Unit,
 ) {
     val context = LocalContext.current
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            onAction(NoteAction.OnImageCaptured(it.toString()))
+        }
+    }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -124,9 +147,7 @@ fun NoteScreen(
                             .fillMaxWidth()
                     )
                 },
-                secondaryButton = {
-
-                },
+                secondaryButton = {},
                 onDismiss = {
                     onAction(
                         NoteAction.OnDismissedLocationDialog
@@ -135,6 +156,13 @@ fun NoteScreen(
             )
         }
         else -> {
+            val imageModifier = Modifier
+                .clickable(
+                    enabled = true,
+                    onClick = {
+                        pickImageLauncher.launch("image/*")
+                    }
+                )
             NotesSurface(
                 header = {
                     Spacer(modifier = Modifier.height(64.dp))
@@ -144,15 +172,15 @@ fun NoteScreen(
                     .fillMaxSize()
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
-                if (state.note?.imageUri != null) {
+                if (state.imageUri != null) {
                     AsyncImage(
                         model = ImageRequest.Builder(context)
-                            .data(state.note.imageUri)
+                            .data(state.imageUri)
                             .crossfade(true)
                             .build(),
                         contentDescription = "Note image",
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier
+                        modifier = imageModifier
                             .widthIn(min = 100.dp, max = 200.dp)
                             .height(200.dp)
                             .clip(RoundedCornerShape(12.dp))
@@ -166,7 +194,7 @@ fun NoteScreen(
                             .build(),
                         contentDescription = "Default image",
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier
+                        modifier = imageModifier
                             .widthIn(min = 100.dp, max = 200.dp)
                             .height(200.dp)
                             .clip(RoundedCornerShape(12.dp))
@@ -330,10 +358,25 @@ private fun ActivityResultLauncher<Array<String>>.requestLocationPermission(
 
 @Preview
 @Composable
-private fun NotePreview() {
+private fun NoteFromCreatePreview() {
     NotesApplicationTheme {
         NoteScreen(
-            state = NoteState(),
+            state = NoteState(
+                isFromCreate = true
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun NoteFromEditOrViewPreview() {
+    NotesApplicationTheme {
+        NoteScreen(
+            state = NoteState(
+                isFromCreate = false
+            ),
             onAction = {}
         )
     }

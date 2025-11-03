@@ -12,6 +12,8 @@ data class NoteState(
     val descError: String? = null,
     val note: NoteUi? = null,
     val imageUri: String? = null,
+    val longitude: Double? = null,
+    val latitude: Double? = null,
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
     val canSave: Boolean = false,
