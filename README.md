@@ -16,4 +16,3 @@ The app allows users to:
 - Only **Firebase Authentication** is used. There is no backend for storing user profiles.  
   → The user’s first name is saved locally using **SharedPreferences** and displayed on the main screen.
 - In **Map Mode**, it is not possible to both display the note title/description *and* navigate to the note details screen on marker click.
-- Due to time constraints, backend sync and advanced map info-window functionality were not implemented.
