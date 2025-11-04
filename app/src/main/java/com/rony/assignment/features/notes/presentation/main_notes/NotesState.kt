@@ -6,7 +6,8 @@ import com.rony.assignment.features.notes.domain.map.MapData
 
 data class NotesState(
     val currentScreenMode: ScreenMode = ScreenMode.LIST_MODE,
-    val isLoadingNotes: Boolean = false,
+    val userFullName: String? = null,
+    val isLoadingNotes: Boolean = true,
     val notes: List<NoteUi> = emptyList()
 ) {
     val tabList = listOf<TabItem>(

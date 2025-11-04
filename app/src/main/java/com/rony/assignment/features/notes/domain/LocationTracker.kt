@@ -21,7 +21,7 @@ class LocationTracker(
     val currentLocation = isObservingLocation
         .flatMapLatest { isObservingLocation ->
             if(isObservingLocation) {
-                locationObserver.observeLocation(interval = 2000)
+                locationObserver.observeLocation(interval = 15_000)
             } else flowOf()
         }
         .stateIn(

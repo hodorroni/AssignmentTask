@@ -94,6 +94,20 @@ fun NotesScreenWrapper(
                             .padding(horizontal = 16.dp)
                             .height(40.dp)
                     ) {
+                        state.userFullName?.let {
+                            val message = stringResource(id = R.string.welcome) + " $it"
+                            val finalMessage = if(message.length > 13) {
+                                message.take(13) + "..."
+                            } else message
+                            Text(
+                                text = finalMessage,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                            )
+                        }
+
                         Icon(
                             painter = painterResource(R.drawable.ic_logo),
                             contentDescription = null,

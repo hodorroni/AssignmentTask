@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rony.assignment.R
 import com.rony.assignment.core.domain.isNameValid
+import com.rony.assignment.core.domain.prefs.PreferencesActions
 import com.rony.assignment.core.domain.util.onFailure
 import com.rony.assignment.core.domain.util.onSuccess
 import com.rony.assignment.features.auth.domain.AuthService
@@ -23,10 +24,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class RegisterViewModel(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val sharedPrefs: PreferencesActions
 ) : ViewModel() {
 
     private val eventChannel = Channel<RegisterEvent>()
@@ -103,6 +104,9 @@ class RegisterViewModel(
             _state.update { it.copy(
                 isRegistering = true
             ) }
+            sharedPrefs.saveFirstname(
+                firstName = state.value.firstNameFieldState.text.toString()
+            )
             authService.register(
                 email = state.value.emailFieldState.text.toString(),
                 password = state.value.passwordFieldState.text.toString(),

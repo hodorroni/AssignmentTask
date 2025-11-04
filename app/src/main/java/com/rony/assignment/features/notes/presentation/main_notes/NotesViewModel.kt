@@ -3,7 +3,10 @@ package com.rony.assignment.features.notes.presentation.main_notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.rony.assignment.features.auth.data.FirebaseAuthService
+import com.rony.assignment.R
+import com.rony.assignment.core.domain.notes.Note
+import com.rony.assignment.core.domain.prefs.PreferencesActions
+import com.rony.assignment.features.notes.domain.AddressResolverRepository
 import com.rony.assignment.features.notes.domain.NoteRepository
 import com.rony.assignment.features.notes.domain.NoteUi
 import com.rony.assignment.features.notes.presentation.mappers.toDomain
@@ -21,7 +24,9 @@ import kotlinx.coroutines.launch
 
 class NotesViewModel(
     private val noteRepository: NoteRepository,
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val addressResolverRepository: AddressResolverRepository,
+    private val prefs: PreferencesActions
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -31,6 +36,7 @@ class NotesViewModel(
         .onStart {
             if (!hasLoadedInitialData) {
                 observeNotes()
+                loadUser()
                 hasLoadedInitialData = true
             }
         }
@@ -52,6 +58,13 @@ class NotesViewModel(
         }
     }
 
+    private fun loadUser() {
+        val name = prefs.getFirstname()
+        _state.update { it.copy(
+            userFullName = name
+        ) }
+    }
+
     private fun onLogoutClicked() {
         viewModelScope.launch {
             noteRepository.deleteAllNotes()
@@ -69,14 +82,26 @@ class NotesViewModel(
     private fun observeNotes() {
         noteRepository.getAllNotes()
             .onEach { localNotes ->
-                val uiNotes = localNotes.map {
-                    it.toUi()
-                }
+                val uiNotes = finalUiListNotes(localNotes = localNotes)
                 _state.update { it.copy(
-                    notes = uiNotes
+                    notes = uiNotes,
+                    isLoadingNotes = false
                 ) }
             }
             .launchIn(viewModelScope)
+    }
+
+    private suspend fun finalUiListNotes(localNotes:  List<Note>): List<NoteUi> {
+        return localNotes.map {
+            it.toUi()
+        }.map { uiNote ->
+            uiNote.copy(
+                address = addressResolverRepository.getAddressFromCoordinates(
+                    lat = uiNote.latitude,
+                    long = uiNote.longitude
+                )
+            )
+        }
     }
 
     private fun onTabSelected(newTab: ScreenMode) {

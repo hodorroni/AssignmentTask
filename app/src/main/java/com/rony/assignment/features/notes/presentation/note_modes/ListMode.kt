@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,9 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.rony.assignment.R
 import com.rony.assignment.features.notes.domain.NoteUi
 import timber.log.Timber
 
@@ -48,7 +56,8 @@ fun ListModeNote(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+            .padding(horizontal = 12.dp, vertical = 12.dp)
+            .windowInsetsPadding(WindowInsets.navigationBars),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(items, key = { it.id }) { note ->
@@ -96,6 +105,11 @@ fun ListModeItem(
     note: NoteUi,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val imageModifier = Modifier
+        .size(160.dp)
+        .clip(RoundedCornerShape(12.dp))
+        .background(MaterialTheme.colorScheme.surfaceVariant)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -110,19 +124,26 @@ fun ListModeItem(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            note.imageUri?.let { imageUrl ->
+            if(note.imageUri != null) {
                 AsyncImage(
-                    model = imageUrl,
+                    model = note.imageUri,
                     contentDescription = note.title,
-                    modifier = Modifier
-                        .size(160.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    modifier = imageModifier,
                     contentScale = ContentScale.Crop
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
+            } else {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(R.drawable.anonymous)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = stringResource(R.string.default_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = imageModifier
+                )
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = note.title.orEmpty(),
@@ -142,11 +163,21 @@ fun ListModeItem(
                 textAlign = TextAlign.Center
             )
 
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = note.address.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                textAlign = TextAlign.Center
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
 
-            note.createdAt?.let {
+            note.formattedDate?.let {
                 Text(
-                    text = "$it",
+                    text = it,
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     ),

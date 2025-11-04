@@ -192,7 +192,7 @@ class NoteViewModel(
     private fun clearInputErrors() {
         _state.update { it.copy(
             titleError = null,
-            descError = null
+            descError = null,
         ) }
     }
 
@@ -201,7 +201,8 @@ class NoteViewModel(
     private fun getFinalUiNoteToSave(): Note {
         val currentState = state.value
         return Note(
-            id = 0,
+            id = if(isFromCreateNote) 0
+                else currentState.note?.id ?: 0,
             title = currentState.titleTextFieldState.text.toString(),
             description = currentState.descriptionTextFieldState.text.toString(),
             createdAt = Clock.System.now(),
@@ -212,8 +213,12 @@ class NoteViewModel(
     }
 
     private fun onEditToggled() {
+        val currentState = state.value
+        val canSave = currentState.titleTextFieldState.text.toString().isNotBlank() &&
+                currentState.descriptionTextFieldState.text.toString().isNotBlank()
         _state.update { it.copy(
-            isEditButtonShown = !it.isEditButtonShown
+            isEditButtonShown = !it.isEditButtonShown,
+            canSave = canSave
         ) }
     }
 
@@ -225,13 +230,20 @@ class NoteViewModel(
             noteId?.let {
                 noteRepository.getNote(noteId).onEach {
                     val noteUi = it.toUi()
-                    _state.update { it.copy(
-                        note = noteUi,
-                        isLoading = false,
-                        imageUri = noteUi.imageUri,
-                        titleTextFieldState = TextFieldState(noteUi.title ?: ""),
-                        descriptionTextFieldState = TextFieldState(noteUi.description ?: "")
-                    ) }
+                    _state.update { current ->
+                        current.apply {
+                            titleTextFieldState.edit {
+                                replace(0, length, noteUi.title ?: "")
+                            }
+                            descriptionTextFieldState.edit {
+                                replace(0, length, noteUi.description ?: "")
+                            }
+                        }.copy(
+                            note = noteUi,
+                            isLoading = false,
+                            imageUri = noteUi.imageUri
+                        )
+                    }
                 }
                     .launchIn(viewModelScope)
             }

@@ -3,7 +3,9 @@ package com.rony.assignment.core.data.di
 import androidx.room.Room
 import com.rony.assignment.core.data.database.NotesDatabase
 import com.rony.assignment.core.data.database.RoomLocalNoteDataSource
+import com.rony.assignment.core.data.prefs.SharedPrefs
 import com.rony.assignment.core.domain.notes.LocalNoteDataSource
+import com.rony.assignment.core.domain.prefs.PreferencesActions
 import com.rony.assignment.features.auth.data.FirebaseAuthService
 import com.rony.assignment.features.auth.domain.AuthService
 import org.koin.android.ext.koin.androidApplication
@@ -24,4 +26,5 @@ val coreDataModule = module {
     single { get<NotesDatabase>().noteDao }
 
     singleOf(::FirebaseAuthService) bind AuthService::class
+    singleOf(::SharedPrefs) bind PreferencesActions::class
 }
