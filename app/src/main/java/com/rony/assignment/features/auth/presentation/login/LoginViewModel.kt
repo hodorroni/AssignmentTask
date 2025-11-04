@@ -7,6 +7,7 @@ import com.rony.assignment.R
 import com.rony.assignment.core.domain.util.onFailure
 import com.rony.assignment.core.domain.util.onSuccess
 import com.rony.assignment.features.auth.domain.AuthService
+import com.rony.assignment.features.auth.domain.mappers.toText
 import com.rony.assignment.features.auth.domain.validation.EmailValidator
 import com.rony.assignment.features.auth.domain.validation.PasswordValidator
 import kotlinx.coroutines.channels.Channel
@@ -102,14 +103,12 @@ class LoginViewModel(
             val password = state.value.passwordTextFieldState.text.toString()
             authService.login(email = email, password = password)
                 .onSuccess {
-                    Timber.tag("stamstam").d("Success!")
                     eventChannel.send(LoginEvent.OnSuccessfullyLoggedIn)
                 }
-                .onFailure {
-                    Timber.tag("stamstam").d("error: $it")
+                .onFailure { error ->
                     _state.update { it.copy(
                         isLoggingIn = false,
-                        generalError = R.string.error_unknown
+                        generalError = error.toText()
                     ) }
                 }
         }

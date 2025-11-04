@@ -141,7 +141,6 @@ class NoteViewModel(
         locationTracker
             .currentLocation
             .onEach { location ->
-                Timber.tag("stamstam").d("got: $location")
                 _state.update {
                     it.copy(
                         longitude = location?.longitude,

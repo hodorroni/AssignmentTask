@@ -1,5 +1,6 @@
 package com.rony.assignment.features.auth.presentation.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,7 +66,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(54.dp))
             Text(
                 text = stringResource(id = R.string.login_title),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -74,14 +75,15 @@ fun LoginScreen(
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        state.generalError?.let {
-            Text(
-                text = stringResource(id = it),
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center
-            )
+        AnimatedVisibility(state.generalError != null) {
+            state.generalError?.let {
+                Text(
+                    text = stringResource(id = it),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         NotesTextField(

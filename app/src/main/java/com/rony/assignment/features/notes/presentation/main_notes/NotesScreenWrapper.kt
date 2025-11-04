@@ -105,7 +105,7 @@ fun NotesScreenWrapper(
 
                         Text(
                             text = stringResource(R.string.log_out),
-                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)

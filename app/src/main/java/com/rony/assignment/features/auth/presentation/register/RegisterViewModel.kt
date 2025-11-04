@@ -8,6 +8,7 @@ import com.rony.assignment.core.domain.isNameValid
 import com.rony.assignment.core.domain.util.onFailure
 import com.rony.assignment.core.domain.util.onSuccess
 import com.rony.assignment.features.auth.domain.AuthService
+import com.rony.assignment.features.auth.domain.mappers.toText
 import com.rony.assignment.features.auth.domain.validation.EmailValidator
 import com.rony.assignment.features.auth.domain.validation.PasswordValidator
 import kotlinx.coroutines.channels.Channel
@@ -107,14 +108,13 @@ class RegisterViewModel(
                 password = state.value.passwordFieldState.text.toString(),
             )
                 .onSuccess {
-                    Timber.tag("Registration").d("successfully registered!")
                     eventChannel.send(RegisterEvent.OnSuccessfullyRegistered)
                 }
-                .onFailure {
+                .onFailure { error ->
                     _state.update { it.copy(
-                        isRegistering = false
+                        isRegistering = false,
+                        generalError = error.toText()
                     ) }
-                    Timber.tag("Registration").d("error: $it")
                 }
         }
     }

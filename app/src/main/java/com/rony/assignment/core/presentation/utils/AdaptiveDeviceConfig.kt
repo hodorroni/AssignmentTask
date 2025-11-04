@@ -7,6 +7,7 @@ import androidx.window.core.layout.WindowSizeClass.Companion.HEIGHT_DP_EXPANDED_
 import androidx.window.core.layout.WindowSizeClass.Companion.HEIGHT_DP_MEDIUM_LOWER_BOUND
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
+import timber.log.Timber
 
 @Composable
 fun currentDeviceConfig(): DeviceConfiguration {
@@ -25,19 +26,38 @@ enum class DeviceConfiguration {
         fun fromWindowSizeClass(windowSizeClass: WindowSizeClass): DeviceConfiguration {
             return with(windowSizeClass) {
                 when {
+                    //edge case for some mobile phones android reports as 0. For example samsung s23 ultra.(my phone)
+                    minHeightDp == 0 -> MOBILE_LANDSCAPE
                     minWidthDp < WIDTH_DP_MEDIUM_LOWER_BOUND &&
                             minHeightDp >= HEIGHT_DP_MEDIUM_LOWER_BOUND -> MOBILE_PORTRAIT
 
                     minWidthDp >= WIDTH_DP_EXPANDED_LOWER_BOUND &&
-                            minHeightDp < HEIGHT_DP_MEDIUM_LOWER_BOUND -> MOBILE_LANDSCAPE
+                            minHeightDp < HEIGHT_DP_MEDIUM_LOWER_BOUND ->{
+                        Timber.tag("stamstam").d("landscape")
+                        Timber.tag("stamstam").d("got minWidthDp: $minWidthDp")
+                        Timber.tag("stamstam").d("got minHeightDp: $minHeightDp")
+                                MOBILE_LANDSCAPE
+                            }
 
                     minWidthDp in WIDTH_DP_MEDIUM_LOWER_BOUND..WIDTH_DP_EXPANDED_LOWER_BOUND &&
-                            minHeightDp >= HEIGHT_DP_EXPANDED_LOWER_BOUND -> TABLET_PORTRAIT
+                            minHeightDp >= HEIGHT_DP_EXPANDED_LOWER_BOUND ->  {
+                        Timber.tag("stamstam").d("got minWidthDp: $minWidthDp")
+                        Timber.tag("stamstam").d("got minHeightDp: $minHeightDp")
+                                TABLET_PORTRAIT
+                            }
 
                     minWidthDp >= WIDTH_DP_EXPANDED_LOWER_BOUND &&
-                            minHeightDp in HEIGHT_DP_MEDIUM_LOWER_BOUND..HEIGHT_DP_EXPANDED_LOWER_BOUND -> TABLET_LANDSCAPE
+                            minHeightDp in HEIGHT_DP_MEDIUM_LOWER_BOUND..HEIGHT_DP_EXPANDED_LOWER_BOUND -> {
+                        Timber.tag("stamstam").d("got minWidthDp: $minWidthDp")
+                        Timber.tag("stamstam").d("got minHeightDp: $minHeightDp")
+                                TABLET_LANDSCAPE
+                            }
 
-                    else -> DESKTOP
+                    else -> {
+                        Timber.tag("stamstam").d("got minWidthDp: $minWidthDp")
+                        Timber.tag("stamstam").d("got minHeightDp: $minHeightDp")
+                        DESKTOP
+                    }
                 }
             }
         }

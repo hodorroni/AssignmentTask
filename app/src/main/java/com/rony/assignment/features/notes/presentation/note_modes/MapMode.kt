@@ -1,6 +1,7 @@
 package com.rony.assignment.features.notes.presentation.note_modes
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
@@ -68,7 +69,8 @@ fun MapMode(
             GoogleMap(
                 modifier = modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
-                properties = MapProperties(mapStyleOptions = mapStyle)
+                properties = MapProperties(mapStyleOptions = mapStyle),
+                contentPadding = PaddingValues(bottom = 40.dp)
             ) {
                 items.forEach { note ->
                     val lat = note.latitude ?: return@forEach

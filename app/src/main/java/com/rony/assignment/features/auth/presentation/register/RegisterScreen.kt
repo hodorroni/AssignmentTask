@@ -1,5 +1,6 @@
 package com.rony.assignment.features.auth.presentation.register
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,17 +71,19 @@ fun RegisterScreen(
         }
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        state.generalError?.let { error ->
-            Text(
-                text = stringResource(id = error),
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontSize = 18.sp
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+        AnimatedVisibility(state.generalError != null) {
+            state.generalError?.let { error ->
+                Text(
+                    text = stringResource(id = error),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 18.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
 
         NotesTextField(
