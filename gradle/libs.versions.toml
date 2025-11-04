@@ -12,6 +12,7 @@ composeBom = "2024.11.00"
 splashscreen = "1.0.1"
 timber = "5.0.1"
 secretsPlugin = "2.0.1"
+adaptive = "1.2.0-alpha04"
 
 #room db
 room = "2.8.3"
@@ -85,6 +86,9 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 #Kotlin datetime
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
+#Mateiral 3 adaptive
+material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 
 
 [plugins]

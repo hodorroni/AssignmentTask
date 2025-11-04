@@ -1,5 +1,6 @@
 package com.rony.assignment.core.presentation.design_system.components.layouts
 
+import android.R.attr.bottom
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,9 +20,18 @@ import androidx.compose.ui.unit.dp
 fun NotesSurface(
     modifier: Modifier = Modifier,
     shouldIncludeVerticalScroll: Boolean = true,
+    shouldSetBottomCardRounded: Boolean = false,
     header: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val shape = if(shouldSetBottomCardRounded) {
+        RoundedCornerShape(15.dp)
+    } else {
+        RoundedCornerShape(
+            topStart = 15.dp,
+            topEnd = 15.dp
+        )
+    }
     Surface(
         color = MaterialTheme.colorScheme.background,
         modifier = modifier
@@ -29,7 +39,7 @@ fun NotesSurface(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             header()
             Surface(
@@ -37,10 +47,7 @@ fun NotesSurface(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(
-                    topStart = 15.dp,
-                    topEnd = 15.dp
-                )
+                shape = shape
             ) {
                 Column(
                     modifier = Modifier
@@ -52,6 +59,11 @@ fun NotesSurface(
                             } else {
                                 Modifier
                             }
+                        )
+                        .then(
+                            if(shouldIncludeVerticalScroll) {
+                                Modifier.padding(bottom = 15.dp)
+                            } else Modifier
                         )
                 ) {
                     content()

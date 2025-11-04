@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButton
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButtonStyles
+import com.rony.assignment.core.presentation.design_system.components.layouts.NotesAdaptiveLayout
 import com.rony.assignment.core.presentation.design_system.components.layouts.NotesSurface
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesPasswordTextField
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesTextField
@@ -54,7 +55,8 @@ fun RegisterScreen(
     state: RegisterState,
     onAction: (RegisterAction) -> Unit,
 ) {
-    NotesSurface(
+    NotesAdaptiveLayout(
+        shouldIncludeVerticalScroll = true,
         header = {
             Spacer(modifier = Modifier.height(54.dp))
             Text(
@@ -63,10 +65,7 @@ fun RegisterScreen(
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(32.dp))
-        },
-        modifier = Modifier
-            .fillMaxSize()
-
+        }
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         state.generalError?.let { error ->

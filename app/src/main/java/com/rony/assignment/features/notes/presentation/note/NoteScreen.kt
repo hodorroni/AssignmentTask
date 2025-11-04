@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +38,7 @@ import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
 import com.rony.assignment.core.presentation.design_system.components.NotesDialog
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButton
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButtonStyles
+import com.rony.assignment.core.presentation.design_system.components.layouts.NotesAdaptiveLayout
 import com.rony.assignment.core.presentation.design_system.components.layouts.NotesSurface
 import com.rony.assignment.core.presentation.design_system.components.text_fields.NotesTextField
 import com.rony.assignment.core.presentation.utils.ObserveAsEvents
@@ -156,21 +158,20 @@ fun NoteScreen(
             )
         }
         else -> {
-            val imageModifier = Modifier
-                .clickable(
-                    enabled = true,
-                    onClick = {
-                        pickImageLauncher.launch("image/*")
-                    }
-                )
-            NotesSurface(
+            NotesAdaptiveLayout(
+                shouldIncludeVerticalScroll = true,
+                modifier = Modifier.fillMaxSize(),
                 header = {
                     Spacer(modifier = Modifier.height(64.dp))
-                },
-                shouldIncludeVerticalScroll = true,
-                modifier = Modifier
-                    .fillMaxSize()
+                }
             ) {
+                val imageModifier = Modifier
+                    .clickable(
+                        enabled = true,
+                        onClick = {
+                            pickImageLauncher.launch("image/*")
+                        }
+                    )
                 Spacer(modifier = Modifier.height(12.dp))
                 if (state.imageUri != null) {
                     AsyncImage(

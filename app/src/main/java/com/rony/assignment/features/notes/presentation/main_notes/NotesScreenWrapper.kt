@@ -8,11 +8,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -32,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import com.rony.assignment.R
 import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
 import com.rony.assignment.core.presentation.design_system.components.layouts.NotesSurface
+import com.rony.assignment.core.presentation.utils.DeviceConfiguration
+import com.rony.assignment.core.presentation.utils.currentDeviceConfig
 import com.rony.assignment.features.notes.domain.NoteUi
 
 @Composable
@@ -40,60 +50,92 @@ fun NotesScreenWrapper(
     onAction: (NotesAction) -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    NotesSurface(
-        shouldIncludeVerticalScroll = false,
-        header = {
-            Spacer(modifier = Modifier.height(45.dp))
-            Icon(
-                painter = painterResource(R.drawable.ic_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterHorizontally),
-                tint = Color.Unspecified
-            )
-            Spacer(modifier = Modifier.height(25.dp))
+    val currentDevice = currentDeviceConfig()
+    val modifier = when(currentDevice) {
+        DeviceConfiguration.MOBILE_PORTRAIT -> {
+            Modifier
+        }
+        DeviceConfiguration.MOBILE_LANDSCAPE -> {
+            Modifier
+                .padding(horizontal = 16.dp)
+                .padding(
+                    WindowInsets.displayCutout
+                        .union(WindowInsets.navigationBars)
+                        .asPaddingValues()
+                )
+        }
+        else -> {
+            Modifier
+                .widthIn(max = 500.dp)
+                .fillMaxHeight()
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = when(currentDevice) {
+            DeviceConfiguration.MOBILE_LANDSCAPE -> Alignment.TopCenter
+            DeviceConfiguration.MOBILE_PORTRAIT -> Alignment.TopCenter
+            else -> Alignment.Center
         }
     ) {
-        when {
-            state.isLoadingNotes -> {
-                Box(
+        NotesSurface(
+            modifier = modifier,
+            shouldIncludeVerticalScroll = false,
+            header = {
+                Spacer(modifier = Modifier.height(45.dp))
+                Icon(
+                    painter = painterResource(R.drawable.ic_logo),
+                    contentDescription = null,
                     modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(30.dp),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-            state.notes.isEmpty() -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No notes created yet! You can create one.",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                }
-            }
-            else -> {
-                TabLayout(
-                    items = state.tabList,
-                    onTabSelected = {
-                        onAction(NotesAction.OnNoteTabSelected(it))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
+                        .size(40.dp)
+                        .align(Alignment.CenterHorizontally),
+                    tint = Color.Unspecified
                 )
-                content()
+                Spacer(modifier = Modifier.height(25.dp))
+            }
+        ) {
+            when {
+                state.isLoadingNotes -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(30.dp),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                state.notes.isEmpty() -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No notes created yet! You can create one.",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+                }
+                else -> {
+                    TabLayout(
+                        items = state.tabList,
+                        onTabSelected = {
+                            onAction(NotesAction.OnNoteTabSelected(it))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    content()
+                }
             }
         }
     }

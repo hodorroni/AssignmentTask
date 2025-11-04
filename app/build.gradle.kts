@@ -78,7 +78,11 @@ dependencies {
     //Timber
     implementation(libs.timber)
 
+    //Kotlin time!
     implementation(libs.kotlinx.datetime)
+
+    //Material3 adaptive layouts!
+    implementation(libs.material3.adaptive)
 
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.androidx.core.ktx)
