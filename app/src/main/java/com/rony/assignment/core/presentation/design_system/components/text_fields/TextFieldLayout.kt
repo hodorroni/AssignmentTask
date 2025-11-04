@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ fun TextFieldLayout(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
     errorText: String? = null,
+    supportingText: String? = null,
     enabled: Boolean = true,
     textFField: @Composable (Modifier, MutableInteractionSource) -> Unit
 ) {
@@ -71,6 +74,16 @@ fun TextFieldLayout(
         }
 
         textFField(textFieldModifier, interactionSource)
+
+        if(supportingText != null && errorText == null) {
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = supportingText,
+                color = MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.7f
+                )
+            )
+        }
 
         errorText?.let {
             Spacer(modifier = Modifier.height(2.dp))

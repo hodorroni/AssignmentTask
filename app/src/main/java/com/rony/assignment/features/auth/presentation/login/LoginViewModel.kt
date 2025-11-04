@@ -3,6 +3,7 @@ package com.rony.assignment.features.auth.presentation.login
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rony.assignment.R
 import com.rony.assignment.core.domain.util.onFailure
 import com.rony.assignment.core.domain.util.onSuccess
 import com.rony.assignment.features.auth.domain.AuthService
@@ -47,12 +48,14 @@ class LoginViewModel(
 
     private val isEmailValidFlow = snapshotFlow { state.value.emailTextFieldState.text.toString() }
         .map { email ->
+            clearAllInputErrors()
             EmailValidator.validate(email)
         }
         .distinctUntilChanged()
 
     private val isPasswordValidFlow = snapshotFlow { state.value.passwordTextFieldState.text.toString() }
         .map { email ->
+            clearAllInputErrors()
             PasswordValidator.validate(email)
                 .isValidPassword
         }
@@ -105,7 +108,8 @@ class LoginViewModel(
                 .onFailure {
                     Timber.tag("stamstam").d("error: $it")
                     _state.update { it.copy(
-                        isLoggingIn = false
+                        isLoggingIn = false,
+                        generalError = R.string.error_unknown
                     ) }
                 }
         }
@@ -122,11 +126,11 @@ class LoginViewModel(
         val isPasswordValidationState = PasswordValidator.validate(password)
 
         val emailError = if(!isEmailValid) {
-            "Invalid email address"
+            R.string.error_email
         } else null
 
         val passwordError = if(!isPasswordValidationState.isValidPassword) {
-            "Invalid password"
+            R.string.error_password
         } else null
 
         _state.update { it.copy(
@@ -139,7 +143,8 @@ class LoginViewModel(
     private fun clearAllInputErrors() {
         _state.update { it.copy(
             emailError = null,
-            passwordError = null
+            passwordError = null,
+            generalError = null
         ) }
     }
 }

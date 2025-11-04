@@ -9,11 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.rony.assignment.R
 import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButton
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButtonStyles
@@ -60,7 +62,7 @@ fun RegisterScreen(
         header = {
             Spacer(modifier = Modifier.height(54.dp))
             Text(
-                text = state.title,
+                text = stringResource(id = R.string.registration_form),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge
             )
@@ -70,7 +72,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
         state.generalError?.let { error ->
             Text(
-                text = error,
+                text = stringResource(id = error),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontSize = 18.sp
@@ -85,9 +87,9 @@ fun RegisterScreen(
             state = state.emailFieldState,
             modifier = Modifier
                 .fillMaxWidth(),
-            placeHolder = "Fill your email!",
-            title = "Email",
-            errorText = state.emailError,
+            placeHolder = stringResource(R.string.placeholder_email),
+            title = stringResource(R.string.title_email),
+            errorText = state.emailError?.let { stringResource(it) },
             isError = state.emailError != null
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -98,9 +100,10 @@ fun RegisterScreen(
                 onAction(RegisterAction.OnPasswordToggle)
             },
             modifier = Modifier.fillMaxWidth(),
-            placeHolder = "Password",
-            title = "Password",
-            errorText = state.passwordError,
+            placeHolder = stringResource(R.string.placeholder_password),
+            title = stringResource(R.string.placeholder_password),
+            supportingText = stringResource(R.string.error_password),
+            errorText = state.passwordError?.let { stringResource(it) },
             isError = state.passwordError != null
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -108,9 +111,9 @@ fun RegisterScreen(
             state = state.firstNameFieldState,
             modifier = Modifier
                 .fillMaxWidth(),
-            placeHolder = "Firstname",
-            title = "Firstname",
-            errorText = state.firstNameError,
+            placeHolder = stringResource(R.string.placeholder_first_name),
+            title = stringResource(R.string.placeholder_first_name),
+            errorText = state.firstNameError?.let { stringResource(it) },
             isError = state.firstNameError != null
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -118,15 +121,15 @@ fun RegisterScreen(
             state = state.lastNameFieldState,
             modifier = Modifier
                 .fillMaxWidth(),
-            placeHolder = "Lastname",
-            title = "Lastname",
-            errorText = state.lastNameError,
+            placeHolder = stringResource(R.string.placeholder_last_name),
+            title = stringResource(R.string.placeholder_last_name),
+            errorText = state.lastNameError?.let { stringResource(it) },
             isError = state.lastNameError != null
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         NotesButton(
-            text = "Register",
+            text = stringResource(R.string.register),
             onClick = {
                 onAction(RegisterAction.OnRegisterClicked)
             },
@@ -139,7 +142,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         NotesButton(
-            text = "Log In",
+            text = stringResource(R.string.login),
             onClick = {
                 onAction(RegisterAction.OnLoginClicked)
             },
@@ -157,11 +160,7 @@ fun RegisterScreen(
 private fun RegisterPreview() {
     NotesApplicationTheme(darkTheme = true) {
         RegisterScreen(
-            state = RegisterState(
-                title = "Please register",
-                generalError = "Error registering",
-                emailError = "Wrong email"
-            ),
+            state = RegisterState(),
             onAction = {
                 
             }

@@ -21,6 +21,7 @@ fun NotesTextField(
     placeHolder: String? = null,
     title: String? = null,
     errorText: String? = null,
+    supportingText: String? = null,
     isError: Boolean = false,
     singleLine: Boolean = true,
     enabled: Boolean = true,

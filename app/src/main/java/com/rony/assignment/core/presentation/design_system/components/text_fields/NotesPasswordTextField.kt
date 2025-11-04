@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rony.assignment.R
 import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
+import timber.log.Timber
 
 @Composable
 fun NotesPasswordTextField(
@@ -37,6 +38,7 @@ fun NotesPasswordTextField(
     placeHolder: String? = null,
     title: String? = null,
     errorText: String? = null,
+    supportingText: String? = null,
     isError: Boolean = false,
     enabled: Boolean = true,
 ) {
@@ -45,6 +47,7 @@ fun NotesPasswordTextField(
         isError = isError,
         errorText = errorText,
         enabled = enabled,
+        supportingText = supportingText,
         modifier = modifier
     ) { styledModifier, interactionSource ->
         BasicSecureTextField(

@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,6 +46,7 @@ import com.rony.assignment.core.presentation.utils.ObserveAsEvents
 import com.rony.assignment.features.notes.presentation.util.hasLocationPermission
 import com.rony.assignment.features.notes.presentation.util.shouldShowLocationPermissionRationale
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 fun NoteRoot(
@@ -101,7 +103,7 @@ fun NoteScreen(
         val showLocationRationale = activity.shouldShowLocationPermissionRationale()
         onAction(
             NoteAction.LocationPermissionInfo(
-                isAcceptedLocation = hasCourseLocationPermission && hasFineLocationPermission,
+                isAcceptedLocation = hasCourseLocationPermission || hasFineLocationPermission,
                 showLocationRationale = showLocationRationale
             )
         )
@@ -111,7 +113,6 @@ fun NoteScreen(
     LaunchedEffect(key1 = true) {
         val activity = context as ComponentActivity
         val showLocationRationale = activity.shouldShowLocationPermissionRationale()
-
         onAction(
             NoteAction.LocationPermissionInfo(
                 isAcceptedLocation = context.hasLocationPermission(),
@@ -137,11 +138,11 @@ fun NoteScreen(
 
         state.shouldShowLocationRationale -> {
             NotesDialog(
-                title = "Location permission is needed",
-                description = "Location permissions will grant the possibility to watch notes within the Map Mode, otherwise nothing will be shown there",
+                title = stringResource(R.string.location_permission_title),
+                description = stringResource(R.string.location_permission_desc),
                 primaryButton = {
                     NotesButton(
-                        text = "Close",
+                        text = stringResource(R.string.close),
                         onClick = {
                             onAction(NoteAction.OnDismissedLocationDialog)
                         },
@@ -179,7 +180,7 @@ fun NoteScreen(
                             .data(state.imageUri)
                             .crossfade(true)
                             .build(),
-                        contentDescription = "Note image",
+                        contentDescription = stringResource(R.string.note_image),
                         contentScale = ContentScale.Crop,
                         modifier = imageModifier
                             .width(200.dp)
@@ -193,7 +194,7 @@ fun NoteScreen(
                             .data(R.drawable.anonymous)
                             .crossfade(true)
                             .build(),
-                        contentDescription = "Default image",
+                        contentDescription = stringResource(R.string.default_image),
                         contentScale = ContentScale.Crop,
                         modifier = imageModifier
                             .width(200.dp)
@@ -209,10 +210,10 @@ fun NoteScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     placeHolder = if(state.isFromCreate) {
-                        "Title"
+                        stringResource(R.string.title)
                     } else null,
-                    title = "Title",
-                    errorText = state.titleError,
+                    title = stringResource(R.string.title),
+                    errorText = state.titleError?.let { stringResource(it) },
                     isError = state.titleError != null,
                     singleLine = true,
                     enabled = state.isFromCreate || (!state.isEditButtonShown)
@@ -224,10 +225,10 @@ fun NoteScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     placeHolder = if(state.isFromCreate) {
-                        "Description"
+                        stringResource(R.string.description)
                     } else null,
-                    title = "Description",
-                    errorText = state.descError,
+                    title = stringResource(R.string.description),
+                    errorText = state.descError?.let { stringResource(it) },
                     isError = state.descError != null,
                     singleLine = false,
                     enabled = state.isFromCreate || (!state.isEditButtonShown)
@@ -283,7 +284,7 @@ fun DefaultButtons(
         modifier = modifier
     ) {
         NotesButton(
-            text = "Cancel",
+            text = stringResource(R.string.cancel),
             onClick = onCancelClicked,
             modifier = Modifier.weight(1f),
             style = NotesButtonStyles.SECONDARY
@@ -293,7 +294,7 @@ fun DefaultButtons(
 
         AnimatedVisibility(visible = isEditButtonShown) {
             NotesButton(
-                text = "Edit",
+                text = stringResource(R.string.edit),
                 onClick = onEditToggled,
                 style = NotesButtonStyles.PRIMARY
             )
@@ -301,7 +302,7 @@ fun DefaultButtons(
 
         AnimatedVisibility(visible = !isEditButtonShown) {
             NotesButton(
-                text = "Save",
+                text = stringResource(R.string.save),
                 onClick = onSaveClicked,
                 style = NotesButtonStyles.PRIMARY,
                 enabled = !isSaveButtonLoading && canSave,
@@ -324,7 +325,7 @@ fun IsFromCreateNewNoteButtons(
         modifier = modifier
     ) {
         NotesButton(
-            text = "Cancel",
+            text = stringResource(R.string.cancel),
             onClick = onCancelClicked,
             modifier = Modifier
                 .weight(1f),
@@ -333,7 +334,7 @@ fun IsFromCreateNewNoteButtons(
         )
         Spacer(modifier = Modifier.width(10.dp))
         NotesButton(
-            text = "Save",
+            text = stringResource(R.string.save),
             onClick = onSaveClicked,
             modifier = Modifier
                 .weight(1f),

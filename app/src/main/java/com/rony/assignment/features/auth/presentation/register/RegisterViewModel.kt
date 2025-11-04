@@ -3,6 +3,7 @@ package com.rony.assignment.features.auth.presentation.register
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rony.assignment.R
 import com.rony.assignment.core.domain.isNameValid
 import com.rony.assignment.core.domain.util.onFailure
 import com.rony.assignment.core.domain.util.onSuccess
@@ -48,22 +49,26 @@ class RegisterViewModel(
 
     private val isEmailValidFlow = snapshotFlow { state.value.emailFieldState.text.toString() }
         .map { email ->
+            clearInputErrors()
             EmailValidator.validate(email)
         }.distinctUntilChanged()
 
     private val isPasswordValidFlow = snapshotFlow { state.value.passwordFieldState.text.toString() }
         .map { password ->
+            clearInputErrors()
             PasswordValidator.validate(password)
                 .isValidPassword
         }.distinctUntilChanged()
 
     private val isFirstNameValidFlow = snapshotFlow { state.value.firstNameFieldState.text.toString() }
         .map { firstname ->
+            clearInputErrors()
             firstname.isNameValid()
         }.distinctUntilChanged()
 
     private val isLastNameValidFlow = snapshotFlow { state.value.lastNameFieldState.text.toString() }
         .map { lastname ->
+            clearInputErrors()
             lastname.isNameValid()
         }.distinctUntilChanged()
 
@@ -130,19 +135,19 @@ class RegisterViewModel(
 
 
         val emailError = if(!isEmailValid) {
-            "Invalid email address"
+            R.string.error_email
         } else null
 
         val passwordError = if(!isPasswordValidationState.isValidPassword) {
-            "Invalid password"
+            R.string.error_password
         } else null
 
         val firstnameError = if(!isFirstnameValid) {
-            "Enter a valid firstname"
+            R.string.error_password
         } else null
 
         val lastnameError = if(!isLastnameValid) {
-            "Enter a valid lastname"
+            R.string.error_lastname
         } else null
 
         _state.update { it.copy(
@@ -160,7 +165,8 @@ class RegisterViewModel(
             emailError = null,
             passwordError = null,
             firstNameError = null,
-            lastNameError = null
+            lastNameError = null,
+            generalError = null
         ) }
     }
 

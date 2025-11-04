@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 
 fun ComponentActivity.shouldShowLocationPermissionRationale(): Boolean {
     return shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+            || shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
 }
 
 private fun Context.hasPermission(permission: String): Boolean {
@@ -19,4 +20,5 @@ private fun Context.hasPermission(permission: String): Boolean {
 
 fun Context.hasLocationPermission(): Boolean {
     return hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            || hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
 }

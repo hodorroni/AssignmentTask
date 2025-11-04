@@ -10,9 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.rony.assignment.R
 import com.rony.assignment.core.presentation.design_system.NotesApplicationTheme
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButton
 import com.rony.assignment.core.presentation.design_system.components.buttons.NotesButtonStyles
@@ -61,7 +64,7 @@ fun LoginScreen(
         header = {
             Spacer(modifier = Modifier.height(54.dp))
             Text(
-                text = state.title,
+                text = stringResource(id = R.string.login_title),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge
             )
@@ -71,16 +74,25 @@ fun LoginScreen(
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(16.dp))
+        state.generalError?.let {
+            Text(
+                text = stringResource(id = it),
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         NotesTextField(
             state = state.emailTextFieldState,
             modifier = Modifier
                 .fillMaxWidth(),
             placeHolder = if(state.emailTextFieldState.text.toString().isEmpty()) {
-                "Enter your email"
+                stringResource(id = R.string.placeholder_email)
             } else null,
-            title = "Email",
-            errorText = state.emailError,
+            title = stringResource(id = R.string.title_email),
+            errorText = state.emailError?.let { stringResource(id = it) },
             isError = state.emailError != null
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -90,12 +102,13 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             placeHolder = if(state.passwordTextFieldState.text.toString().isEmpty()) {
-                "Password"
+                stringResource(R.string.placeholder_password)
             } else null,
-            title = "Password",
-            errorText = state.passwordError,
+            title = stringResource(R.string.placeholder_password),
+            errorText = state.emailError?.let { stringResource(id = it) },
             isError = state.passwordError != null,
             isPasswordVisible = state.isPasswordVisible,
+            supportingText = stringResource(R.string.error_password),
             enabled = true,
             onToggleVisibilityClick = {
                 onAction(LoginAction.OnPasswordVisibilityToggled)
@@ -105,7 +118,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         NotesButton(
-            text = "Log In",
+            text = stringResource(R.string.login),
             onClick = {
                 onAction(LoginAction.OnLoginClicked)
             },
@@ -118,7 +131,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         NotesButton(
-            text = "Sign Up",
+            text = stringResource(R.string.sign_up),
             onClick = {
                 onAction(LoginAction.OnRegisterClicked)
             },
@@ -129,22 +142,6 @@ fun LoginScreen(
             isLoading = false
         )
     }
-//    NotesSurface(
-//        header = {
-//            Spacer(modifier = Modifier.height(54.dp))
-//            Text(
-//                text = state.title,
-//                color = MaterialTheme.colorScheme.onPrimary,
-//                style = MaterialTheme.typography.titleLarge
-//            )
-//            Spacer(modifier = Modifier.height(32.dp))
-//        },
-//        modifier = Modifier
-//            .fillMaxSize()
-//
-//    ) {
-//
-//    }
 }
 
 @Composable

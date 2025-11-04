@@ -1,5 +1,6 @@
 package com.rony.assignment.features.notes.presentation.main_notes
 
+import com.rony.assignment.R
 import com.rony.assignment.features.notes.domain.NoteUi
 import com.rony.assignment.features.notes.domain.map.MapData
 
@@ -10,12 +11,12 @@ data class NotesState(
 ) {
     val tabList = listOf<TabItem>(
         TabItem(
-            title = "List Mode",
+            title = R.string.list_mode,
             screenMod = ScreenMode.LIST_MODE,
             isSelected = this.currentScreenMode == ScreenMode.LIST_MODE
         ),
         TabItem(
-            title = "Map Mode",
+            title = R.string.map_mode,
             screenMod = ScreenMode.MAP_MODE,
             isSelected = this.currentScreenMode == ScreenMode.MAP_MODE
         )
@@ -37,7 +38,7 @@ data class NotesState(
 }
 
 data class TabItem(
-    val title: String,
+    val title: Int,
     val screenMod: ScreenMode,
     val isSelected: Boolean
 )

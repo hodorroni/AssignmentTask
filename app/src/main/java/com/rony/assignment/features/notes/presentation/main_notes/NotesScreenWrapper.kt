@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -116,12 +117,13 @@ fun NotesScreenWrapper(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No notes created yet! You can create one.",
+                            text = stringResource(R.string.empty_notes),
                             color = MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
                             modifier = Modifier
                                 .fillMaxSize()
+                                .padding(top = 20.dp)
                         )
                     }
                 }
@@ -157,7 +159,7 @@ fun TabLayout(
     ) {
         items.forEach { tab ->
             TabItem(
-                text = tab.title,
+                text = stringResource(id = tab.title),
                 isSelected = tab.isSelected,
                 onClick = { onTabSelected(tab.screenMod) },
                 modifier = Modifier.weight(1f)

@@ -35,7 +35,6 @@ fun NotesAdaptiveLayout(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val currentConfig = currentDeviceConfig()
-
     when(currentConfig) {
         DeviceConfiguration.MOBILE_PORTRAIT -> {
             NotesSurface(

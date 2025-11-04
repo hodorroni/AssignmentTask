@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rony.assignment.R
 import com.rony.assignment.core.domain.notes.Note
 import com.rony.assignment.features.auth.domain.validation.EmailValidator
 import com.rony.assignment.features.notes.domain.LocationObserver
@@ -42,8 +43,6 @@ class NoteViewModel(
     private val eventChannel = Channel<NoteEvent>()
     val event = eventChannel.receiveAsFlow()
 
-    var shouldShowPermissionsOnScreen = true
-
     private var _state = MutableStateFlow(NoteState())
     val state = _state
         .onStart {
@@ -68,12 +67,14 @@ class NoteViewModel(
 
     private val isTitleValidFlow = snapshotFlow { state.value.titleTextFieldState.text.toString() }
         .map { title ->
+            clearInputErrors()
             title.isNotBlank()
         }
         .distinctUntilChanged()
 
     private val isDescriptionValidFlow = snapshotFlow { state.value.descriptionTextFieldState.text.toString() }
         .map { description ->
+            clearInputErrors()
             description.isNotBlank()
         }
         .distinctUntilChanged()
@@ -152,6 +153,9 @@ class NoteViewModel(
     }
 
     private fun saveNote() {
+        if(!validateInputFields()) {
+            return
+        }
         viewModelScope.launch {
             _state.update { it.copy(
                 isSaving = true
@@ -163,6 +167,34 @@ class NoteViewModel(
             ) }
             eventChannel.send(NoteEvent.OnSuccessfullySavedNote)
         }
+    }
+
+    private fun validateInputFields(): Boolean {
+        clearInputErrors()
+        val currentState = state.value
+        val title = currentState.titleTextFieldState.text.toString()
+        val description = currentState.descriptionTextFieldState.text.toString()
+
+        val titleError = if(title.isEmpty()) {
+            R.string.error_title
+        } else null
+
+        val descError = if(description.isEmpty()) {
+            R.string.error_description
+        } else null
+
+        _state.update { it.copy(
+            titleError = titleError,
+            descError = descError
+        ) }
+        return titleError != null && descError != null
+    }
+
+    private fun clearInputErrors() {
+        _state.update { it.copy(
+            titleError = null,
+            descError = null
+        ) }
     }
 
     //isFromCreate = true meaning we will create a new note. Scratch new one!
