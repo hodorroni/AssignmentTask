@@ -3,6 +3,7 @@ package com.rony.assignment.features.notes.presentation.main_notes
 import com.rony.assignment.features.notes.domain.NoteUi
 
 sealed interface NotesAction {
+    data object OnLogoutClick: NotesAction
     data class OnNoteTabSelected (val selectedTab: ScreenMode): NotesAction
     data class OnNoteDeleted (val note: NoteUi): NotesAction
     data object OnFabCreateNewNoteClicked: NotesAction

@@ -10,7 +10,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.rony.assignment.core.presentation.utils.ObserveAsEvents
+import com.rony.assignment.features.auth.presentation.navigation.AuthRoutes
 import com.rony.assignment.features.notes.domain.NoteUi
+import com.rony.assignment.features.notes.presentation.main_notes.NotesEvent
 import com.rony.assignment.features.notes.presentation.main_notes.NotesScreenRoot
 import com.rony.assignment.features.notes.presentation.main_notes.NotesViewModel
 import com.rony.assignment.features.notes.presentation.note.NoteRoot
@@ -32,6 +35,18 @@ fun NavGraphBuilder.notesGraph(
                 contentAlignment = Alignment.Center
             ) {
                 val viewModel = koinViewModel<NotesViewModel>() //shared viewmodel for list Mode + MapMode screens.
+
+                ObserveAsEvents(viewModel.event) { event ->
+                    when(event) {
+                        NotesEvent.OnSuccessfullyLoggedOut -> {
+                            navController.navigate(AuthRoutes.Graph) {
+                                popUpTo(NoteRoutes.Graph) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                }
                 NotesScreenRoot(
                     viewModel = viewModel,
                     openCreateNoteScreen = {

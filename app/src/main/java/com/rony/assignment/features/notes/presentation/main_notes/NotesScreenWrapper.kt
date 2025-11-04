@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -84,18 +83,41 @@ fun NotesScreenWrapper(
         NotesSurface(
             modifier = modifier,
             shouldIncludeVerticalScroll = false,
-            header = {
-                Spacer(modifier = Modifier.height(45.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .align(Alignment.CenterHorizontally),
-                    tint = Color.Unspecified
-                )
-                Spacer(modifier = Modifier.height(25.dp))
-            }
+            logoutHeader = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Spacer(modifier = Modifier.height(55.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .height(40.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(40.dp),
+                            tint = Color.Unspecified
+                        )
+
+                        Text(
+                            text = stringResource(R.string.log_out),
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .clickable {
+                                    onAction(NotesAction.OnLogoutClick)
+                                }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(25.dp))
+                }
+            },
         ) {
             when {
                 state.isLoadingNotes -> {

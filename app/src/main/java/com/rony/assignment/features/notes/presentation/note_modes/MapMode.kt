@@ -2,13 +2,19 @@ package com.rony.assignment.features.notes.presentation.note_modes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -24,40 +30,61 @@ import com.rony.assignment.features.notes.domain.map.MapData
 @Composable
 fun MapMode(
     items: List<MapData>,
-    onNoteClicked:(Int) -> Unit,
+    onNoteClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val mapStyle = remember {
-        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
-    }
+    when {
+        items.isEmpty() -> {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+            ) {
+                Text(
+                    text = stringResource(R.string.empty_notes_map_mode),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 20.dp)
+                )
+            }
+        }
 
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(
-            items.firstOrNull()?.let { LatLng(it.latitude ?: 0.0, it.longitude ?: 0.0) }
-                ?: LatLng(0.0, 0.0),
-            10f
-        )
-    }
+        else -> {
+            val context = LocalContext.current
+            val mapStyle = remember {
+                MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+            }
 
-    GoogleMap(
-        modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        properties = MapProperties(mapStyleOptions = mapStyle)
-    ) {
-        items.forEach { note ->
-            val lat = note.latitude ?: return@forEach
-            val lon = note.longitude ?: return@forEach
+            val cameraPositionState = rememberCameraPositionState {
+                position = CameraPosition.fromLatLngZoom(
+                    items.firstOrNull()?.let { LatLng(it.latitude ?: 0.0, it.longitude ?: 0.0) }
+                        ?: LatLng(0.0, 0.0),
+                    10f
+                )
+            }
 
-            Marker(
-                state = MarkerState(position = LatLng(lat, lon)),
-                title = note.title ?: "",
-                snippet = note.description ?: "",
-                onClick = {
-                    onNoteClicked(note.id)
-                    false
+            GoogleMap(
+                modifier = modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(mapStyleOptions = mapStyle)
+            ) {
+                items.forEach { note ->
+                    val lat = note.latitude ?: return@forEach
+                    val lon = note.longitude ?: return@forEach
+
+                    Marker(
+                        state = MarkerState(position = LatLng(lat, lon)),
+                        title = note.title ?: "",
+                        snippet = note.description ?: "",
+                        onClick = {
+                            onNoteClicked(note.id)
+                            false
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 }

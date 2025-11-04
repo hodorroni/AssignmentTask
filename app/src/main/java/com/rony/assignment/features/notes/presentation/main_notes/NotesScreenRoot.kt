@@ -1,5 +1,6 @@
 package com.rony.assignment.features.notes.presentation.main_notes
 
+import android.annotation.SuppressLint
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
@@ -36,6 +37,7 @@ fun NotesScreenRoot(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NotesScreen(
     action: (NotesAction) -> Unit,

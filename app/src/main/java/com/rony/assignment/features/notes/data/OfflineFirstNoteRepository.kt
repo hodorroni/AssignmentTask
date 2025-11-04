@@ -26,6 +26,10 @@ class OfflineFirstNoteRepository(
         localNoteDataSource.deleteNote(note)
     }
 
+    override suspend fun deleteAllNotes() {
+        localNoteDataSource.deleteAllNotes()
+    }
+
     override suspend fun saveNotes(notes: List<Note>) {
         localNoteDataSource.saveNotes(notes)
     }

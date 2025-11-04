@@ -187,7 +187,7 @@ class NoteViewModel(
             titleError = titleError,
             descError = descError
         ) }
-        return titleError != null && descError != null
+        return titleError == null && descError == null
     }
 
     private fun clearInputErrors() {

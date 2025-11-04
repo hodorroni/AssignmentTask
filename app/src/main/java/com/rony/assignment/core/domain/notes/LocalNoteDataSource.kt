@@ -9,4 +9,5 @@ interface LocalNoteDataSource {
     suspend fun saveNote(note: Note)
     suspend fun saveNotes(notes: List<Note>)
     suspend fun deleteNote(note: Note)
+    suspend fun deleteAllNotes()
 }

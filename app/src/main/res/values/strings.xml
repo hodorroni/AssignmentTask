@@ -5,6 +5,7 @@
     <string name="register">Register</string>
     <string name="sign_up">Sign Up</string>
     <string name="login">Log in</string>
+    <string name="log_out">Log Out</string>
     <string name="placeholder_email">Fill your email!</string>
     <string name="title_email">Email</string>
     <string name="placeholder_password">Password</string>
@@ -17,6 +18,7 @@
     <string name="list_mode">List Mode</string>
     <string name="map_mode">Map Mode</string>
     <string name="empty_notes">No notes created yet! You can create one.</string>
+    <string name="empty_notes_map_mode">No notes found that were created with location.</string>
     <string name="note_image">Note image</string>
     <string name="default_image">Default image</string>
     <string name="location_permission_title">Location permission is needed</string>
