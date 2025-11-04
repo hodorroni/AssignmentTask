@@ -3,7 +3,6 @@ package com.rony.assignment.features.notes.presentation.main_notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.rony.assignment.R
 import com.rony.assignment.core.domain.notes.Note
 import com.rony.assignment.core.domain.prefs.PreferencesActions
 import com.rony.assignment.features.notes.domain.AddressResolverRepository
@@ -36,7 +35,7 @@ class NotesViewModel(
         .onStart {
             if (!hasLoadedInitialData) {
                 observeNotes()
-                loadUser()
+                getUserFirstname()
                 hasLoadedInitialData = true
             }
         }
@@ -58,7 +57,7 @@ class NotesViewModel(
         }
     }
 
-    private fun loadUser() {
+    private fun getUserFirstname() {
         val name = prefs.getFirstname()
         _state.update { it.copy(
             userFullName = name
